@@ -1,0 +1,619 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>KAYBOII'S RESTURANT — Demo</title>
+  <style>
+    :root{
+      --bg:#fffef9; --card:#ffffff; --muted:#6b7280; --accent:#f59e0b;
+      --success:#16a34a; --danger:#ef4444; --glass: rgba(255,255,255,0.7);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(180deg,#fffef9, #fff);color:#111}
+    .container{max-width:1100px;margin:28px auto;padding:18px}
+    header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{width:68px;height:68px;border-radius:12px;background:linear-gradient(135deg,#fde68a,#f59e0b);display:flex;align-items:center;justify-content:center;font-weight:800;color:#4b2e00}
+    h1{font-size:20px;margin:0}
+    p.lead{margin:0;color:var(--muted);font-size:13px}
+    .grid{display:grid;grid-template-columns:1fr 340px;gap:18px;margin-top:18px}
+    .card{background:var(--card);border-radius:12px;padding:14px;box-shadow:0 6px 18px rgba(15,23,42,0.06);border:1px solid rgba(0,0,0,0.04)}
+    .menu-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    .item{display:flex;gap:12px;align-items:flex-start;padding:10px;border-radius:12px;border:1px solid rgba(0,0,0,0.04);background:linear-gradient(180deg,#fff,#fff)} 
+    .img{width:84px;height:72px;border-radius:10px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;color:#9ca3af;font-weight:600}
+    .item h3{margin:0;font-size:15px}
+    .item p{margin:6px 0 0;color:var(--muted);font-size:13px}
+    .price-row{display:flex;align-items:center;justify-content:space-between;margin-top:10px}
+    button{cursor:pointer}
+    .btn{padding:8px 12px;border-radius:8px;border:0;font-weight:600}
+    .btn-primary{background:var(--accent);color:#fff}
+    .btn-ghost{background:transparent;border:1px solid rgba(0,0,0,0.06)}
+    .cart{display:flex;flex-direction:column;gap:8px}
+    .cart-list{max-height:300px;overflow:auto;padding-right:6px}
+    .cart-row{display:flex;justify-content:space-between;align-items:center;padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.03)}
+    .muted{color:var(--muted);font-size:13px}
+    .small{font-size:12px;color:var(--muted)}
+    .total{font-weight:800;font-size:18px}
+    .checkout-form{display:flex;flex-direction:column;gap:8px}
+    input, textarea{padding:10px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);font-size:14px}
+    .center{text-align:center}
+    .badge{display:inline-block;padding:6px 8px;border-radius:999px;background:#eef2ff;color:#3730a3;font-weight:700;font-size:12px}
+    .status-pending{background:#fef3c7;color:#92400e;padding:6px 8px;border-radius:999px;font-size:12px}
+    .status-paid{background:rgba(16,185,129,0.12);color:var(--success);padding:6px 8px;border-radius:999px;font-size:12px}
+    .status-processing{background:rgba(59,130,246,0.1);color:#2563eb;padding:6px 8px;border-radius:999px;font-size:12px}
+    .admin-btn{background:#111827;color:#fff;padding:6px 10px;border-radius:8px}
+    footer{margin-top:22px;color:var(--muted);font-size:13px;text-align:center}
+    /* responsive */
+    @media (max-width:900px){ .grid{grid-template-columns:1fr; } .menu-grid{grid-template-columns:1fr} .img{width:72px;height:64px} .logo{width:56px;height:56px} }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo">KR</div>
+        <div>
+          <h1>Kayboiis Resturand</h1>
+          <p class="lead">Order online — fresh, fast & tasty</p>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div class="small">Payment</div>
+        <div style="font-weight:700">Palmpay: <span id="palmpay-num">9153764600</span></div>
+      </div>
+    </header>
+
+    <div style="margin-top:12px;display:flex;gap:8px;align-items:center;justify-content:space-between">
+      <div style="display:flex;gap:8px;align-items:center">
+        <div class="badge">Demo</div>
+        <div class="small">Palmpay account name: <strong id="palmpay-name">Adekunle Solomon</strong></div>
+      </div>
+      <div>
+        <button class="admin-btn" id="adminOpen">Admin</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- Menu + Add -->
+      <div>
+        <div class="card">
+          <h2 style="margin:0 0 8px 0">Menu</h2>
+          <div class="menu-grid" id="menuGrid">
+            <!-- JS renders menu items here -->
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <h3 style="margin:0 0 8px 0">How payments work (demo)</h3>
+          <ol style="margin:0 0 8px 18px;color:var(--muted);font-size:14px">
+            <li>Checkout creates an order and shows Palmpay details.</li>
+            <li>Pay with Palmpay using <strong>9153764600 (Adekunle Solomon)</strong> and use the order ID as reference.</li>
+            <li>Click <em>I Paid (Simulate)</em> to simulate provider webhook verification and update order.</li>
+          </ol>
+          <div class="small" style="margin-top:8px">To replace with a real backend: see comments in the file for endpoints and webhook instructions.</div>
+        </div>
+      </div>
+
+      <!-- Cart / Checkout -->
+      <aside class="card">
+        <h3 style="margin:0 0 8px 0">Your Order</h3>
+        <div class="cart">
+          <div class="cart-list" id="cartList">
+            <div class="muted">No items yet — add something tasty!</div>
+          </div>
+
+          <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div class="small">Subtotal</div>
+              <div class="total" id="subtotalText">₦0</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <button class="btn btn-primary" id="checkoutBtn" disabled>Checkout</button>
+              <button class="btn btn-ghost" id="clearCartBtn">Clear</button>
+            </div>
+          </div>
+
+          <div style="margin-top:10px">
+            <div class="small">Tip: You will be shown the Palmpay account to complete payment manually.</div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Checkout Modal (simple inline) -->
+    <div id="checkoutArea" style="display:none;margin-top:14px">
+      <div class="card">
+        <h3 style="margin:0 0 8px 0">Checkout</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <input id="custName" placeholder="Your name" />
+          <input id="custPhone" placeholder="Phone number" />
+        </div>
+        <textarea id="custNote" rows="3" placeholder="Order note (spicy, no onions)"></textarea>
+        <div style="display:flex;gap:8px;margin-top:8px;align-items:center;justify-content:space-between">
+          <div>
+            <div class="small">Total to pay</div>
+            <div class="total" id="checkoutTotal">₦0</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-ghost" id="cancelCheckout">Cancel</button>
+            <button class="btn btn-primary" id="placeOrder">Place Order</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order placed / Payment details (shown after placing) -->
+    <div id="orderPlacedArea" style="display:none;margin-top:14px"></div>
+
+    <footer>
+      © <span id="year"></span> Kayboiis Resturand — demo app. To make this production-ready you'll add a backend, persistent DB, and real payment gateway integration.
+    </footer>
+  </div>
+
+  <!-- Admin modal / area -->
+  <div id="adminModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);align-items:center;justify-content:center;padding:18px">
+    <div style="background:#fff;border-radius:12px;padding:18px;max-width:900px;width:100%">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h3 style="margin:0">Admin Dashboard</h3>
+        <div>
+          <button id="adminClose" class="btn btn-ghost">Close</button>
+        </div>
+      </div>
+
+      <div style="margin-top:12px">
+        <div style="display:flex;gap:8px;align-items:center">
+          <label class="small">Password:</label>
+          <input id="adminPass" type="password" placeholder="enter admin password" />
+          <button id="adminUnlock" class="btn btn-primary">Unlock</button>
+        </div>
+
+        <div id="adminContent" style="margin-top:12px;display:none">
+          <div style="display:flex;gap:8px;align-items:center;justify-content:space-between">
+            <div class="small">Orders (local demo)</div>
+            <div style="display:flex;gap:8px">
+              <button id="seedMenu" class="btn btn-ghost">Reset / Seed</button>
+              <button id="exportOrders" class="btn btn-ghost">Export JSON</button>
+              <button id="clearAllOrders" class="btn" style="background:#ef4444;color:#fff">Clear All</button>
+            </div>
+          </div>
+
+          <div id="ordersList" style="margin-top:12px;max-height:400px;overflow:auto"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /****************************************************************
+     * Kayboiis Resturand — Self-contained demo app
+     * Save as kayboois_resturand.html and open in a browser.
+     *
+     * Notes: This is a front-end only demo. It simulates a backend
+     * using localStorage. Replace the "fakeBackend" functions with
+     * real API calls (fetch/axios) to your Node/Express server to
+     * convert into a production app.
+     *
+     * Palmpay account correct details:
+     * - number: 9153764600
+     * - name: Adekunle Solomon
+     ****************************************************************/
+
+    // ---------- Menu data ----------
+    const MENU = [
+
+      { id: 'm2', name: 'Grilled Suya Chicken', price: 2300, desc: 'Tender chicken skewers coated in our special suya spice mix — smoky and full of flavor.' },
+      { id: 'm3', name: 'Pepper Soup (Beef)', price: 1500, desc: 'A light, spicy broth with tender beef and seasoned to soothe and excite the palate.' },
+      { id: 'm4', name: 'Fried Plantain (Dodo)', price: 600, desc: 'Sweet and golden fried plantain slices — the perfect side for any meal.' },
+      { id: 'm5', name: 'Fish Stew & Yam', price: 2600, desc: 'Hearty fish stew poured over boiled yam, topped with fresh herbs and spicy goodness.' },
+      { id: 'm6', name: 'Vegetable Salad', price: 900, desc: 'A crisp, bright salad with seasonal vegetables and a tangy house dressing.' },
+    ];
+
+    // Palmpay info (updated)
+    const PALMPAY = { provider: 'Palmpay', number: '9153764600', accountName: 'Adekunle Solomon' };
+
+    // ---------- Utilities ----------
+    function fmtNaira(n){ return '₦' + Number(n||0).toLocaleString(); }
+    function genOrderId(){ return 'KAY-' + Date.now().toString(36).toUpperCase(); }
+
+    // --------- Storage-backed "fake backend" ----------
+    // This simulates server-side persistence and payment webhooks.
+    const STORAGE_KEYS = { CART: 'kr_cart_v1', ORDERS: 'kr_orders_v1' };
+
+    function readOrders(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEYS.ORDERS) || '[]') }catch(e){return[]} }
+    function writeOrders(orders){ localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(orders || [])); }
+
+    async function fakeCreateOrder({ customerName, customerPhone, items, note, total }) {
+      // Simulate server processing and return order object
+      const order = {
+        orderId: genOrderId(),
+        customerName,
+        customerPhone,
+        items,
+        note,
+        total,
+        payment: { provider: PALMPAY.provider, status: 'PENDING', providerRef: null },
+        status: 'AWAITING_PAYMENT',
+        createdAt: new Date().toISOString()
+      };
+      const orders = readOrders();
+      orders.unshift(order);
+      writeOrders(orders);
+      // simulate network latency
+      await new Promise(r => setTimeout(r, 350));
+      return order;
+    }
+
+    async function fakeGetOrder(orderId){
+      const orders = readOrders();
+      return orders.find(o => o.orderId === orderId) || null;
+    }
+
+    async function fakeMarkPaid(orderId, providerRef) {
+      const orders = readOrders();
+      const o = orders.find(x => x.orderId === orderId);
+      if(!o) throw new Error('Order not found');
+      o.payment.status = 'PAID';
+      o.payment.providerRef = providerRef || ('SIM-' + Date.now());
+      o.status = 'PROCESSING';
+      writeOrders(orders);
+      return o;
+    }
+
+    async function fakeUpdateStatus(orderId, status){
+      const orders = readOrders();
+      const o = orders.find(x => x.orderId === orderId);
+      if(!o) throw new Error('Order not found');
+      o.status = status;
+      writeOrders(orders);
+      return o;
+    }
+
+    // ---------- Cart logic (local UI cart) ----------
+    let cart = {}; // {id: qty}
+    function saveCart(){ localStorage.setItem(STORAGE_KEYS.CART, JSON.stringify(cart)); }
+    function loadCart(){ try{ cart = JSON.parse(localStorage.getItem(STORAGE_KEYS.CART) || '{}') }catch(e){cart={}}}
+    function cartItems(){ return Object.entries(cart).map(([id,q]) => { const m = MENU.find(x=>x.id===id); return {...m, qty:q}; }) }
+    function cartSubtotal(){ return cartItems().reduce((s,it)=>s + (it.price||0)*it.qty, 0) }
+
+    // ---------- Render functions ----------
+    const menuGrid = document.getElementById('menuGrid');
+    const cartList = document.getElementById('cartList');
+    const subtotalText = document.getElementById('subtotalText');
+    const checkoutBtn = document.getElementById('checkoutBtn');
+    const clearCartBtn = document.getElementById('clearCartBtn');
+    const checkoutArea = document.getElementById('checkoutArea');
+    const placeOrderBtn = document.getElementById('placeOrder');
+    const cancelCheckoutBtn = document.getElementById('cancelCheckout');
+    const custNameInput = document.getElementById('custName');
+    const custPhoneInput = document.getElementById('custPhone');
+    const custNoteInput = document.getElementById('custNote');
+    const orderPlacedArea = document.getElementById('orderPlacedArea');
+
+    function renderMenu(){
+      menuGrid.innerHTML = '';
+      MENU.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `
+          <div class="img">IMG</div>
+          <div style="flex:1">
+            <h3>${item.name}</h3>
+            <p>${item.desc}</p>
+            <div class="price-row">
+              <div style="font-weight:700">${fmtNaira(item.price)}</div>
+              <div style="display:flex;gap:6px;align-items:center">
+                <button class="btn btn-ghost" data-action="dec" data-id="${item.id}">-</button>
+                <div class="small" id="cnt-${item.id}">${cart[item.id]||0}</div>
+                <button class="btn btn-primary" data-action="inc" data-id="${item.id}">Add</button>
+              </div>
+            </div>
+          </div>
+        `;
+        menuGrid.appendChild(div);
+      });
+    }
+
+    function renderCart(){
+      const items = cartItems();
+      cartList.innerHTML = '';
+      if(items.length === 0){
+        cartList.innerHTML = '<div class="muted">No items yet — add something tasty!</div>';
+        checkoutBtn.disabled = true;
+      } else {
+        items.forEach(it => {
+          const row = document.createElement('div');
+          row.className = 'cart-row';
+          row.innerHTML = `
+            <div>
+              <div style="font-weight:700">${it.name} x${it.qty}</div>
+              <div class="small">${fmtNaira(it.price * it.qty)}</div>
+            </div>
+            <div style="display:flex;gap:6px;align-items:center">
+              <button class="btn btn-ghost" data-action="dec" data-id="${it.id}">-</button>
+              <button class="btn btn-ghost" data-action="inc" data-id="${it.id}">+</button>
+            </div>
+          `;
+          cartList.appendChild(row);
+        });
+        checkoutBtn.disabled = false;
+      }
+      subtotalText.textContent = fmtNaira(cartSubtotal());
+      document.getElementById('checkoutTotal').textContent = fmtNaira(cartSubtotal());
+      MENU.forEach(m => { const el = document.getElementById(`cnt-${m.id}`); if(el) el.textContent = cart[m.id] || 0; });
+    }
+
+    // ---------- Actions ----------
+    function addToCart(id){
+      cart[id] = (cart[id] || 0) + 1;
+      saveCart(); renderCart(); renderMenu();
+    }
+    function removeFromCart(id){
+      if(!cart[id]) return;
+      cart[id] = cart[id] - 1;
+      if(cart[id] <= 0) delete cart[id];
+      saveCart(); renderCart(); renderMenu();
+    }
+    clearCartBtn.addEventListener('click', ()=>{ cart = {}; saveCart(); renderCart(); renderMenu(); });
+
+    // menu button events (delegated)
+    menuGrid.addEventListener('click', (e)=>{
+      const btn = e.target.closest('button');
+      if(!btn) return;
+      const act = btn.dataset.action;
+      const id = btn.dataset.id;
+      if(act === 'inc') addToCart(id);
+      if(act === 'dec') removeFromCart(id);
+    });
+    cartList.addEventListener('click', (e)=>{
+      const btn = e.target.closest('button');
+      if(!btn) return;
+      const act = btn.dataset.action;
+      const id = btn.dataset.id;
+      if(act === 'inc') addToCart(id);
+      if(act === 'dec') removeFromCart(id);
+    });
+
+    // checkout
+    checkoutBtn.addEventListener('click', ()=>{ checkoutArea.style.display = 'block'; window.scrollTo({top:document.body.scrollHeight, behavior:'smooth'}); });
+    cancelCheckoutBtn.addEventListener('click', ()=>{ checkoutArea.style.display = 'none'; });
+
+    placeOrderBtn.addEventListener('click', async ()=>{
+      const name = custNameInput.value.trim();
+      const phone = custPhoneInput.value.trim();
+      const note = custNoteInput.value.trim();
+      if(!name || !phone){ alert('Please enter your name and phone number'); return; }
+      const items = cartItems().map(it => ({ id: it.id, name: it.name, desc: it.desc, price: it.price, qty: it.qty }));
+      const total = cartSubtotal();
+      // create order on fake backend
+      placeOrderBtn.disabled = true;
+      placeOrderBtn.textContent = 'Placing...';
+      try{
+        const order = await fakeCreateOrder({ customerName: name, customerPhone: phone, items, note, total });
+        showOrderPlaced(order);
+        // left cart intact so the user can verify payment etc — clear on "I Paid"
+      }catch(err){
+        alert('Could not create order: ' + err.message);
+      } finally {
+        placeOrderBtn.disabled = false;
+        placeOrderBtn.textContent = 'Place Order';
+      }
+    });
+
+    // show placed order + payment instructions
+    function showOrderPlaced(order){
+      checkoutArea.style.display = 'none';
+      orderPlacedArea.style.display = 'block';
+      orderPlacedArea.innerHTML = `
+        <div class="card">
+          <h3>Order Created</h3>
+          <div class="small" style="margin-top:6px">Order ID: <strong>${order.orderId}</strong> — status: <span class="status-pending">Awaiting payment</span></div>
+          <div style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div>
+              <h4>Payment — ${PALMPAY.provider}</h4>
+              <div style="margin-top:8px;padding:10px;border-radius:8px;background:#fff7ed;border:1px solid rgba(245,158,11,0.12)">
+                <div class="small">Account name</div>
+                <div style="font-weight:700">${PALMPAY.accountName}</div>
+                <div class="small" style="margin-top:8px">Account number</div>
+                <div style="font-family:monospace;font-weight:700;font-size:18px">${PALMPAY.number}</div>
+                <div style="margin-top:8px;display:flex;gap:8px">
+                  <button class="btn btn-ghost" id="copyAcct">Copy</button>
+                  <button class="btn btn-ghost" id="callAcct">Call</button>
+                  <button class="btn btn-primary" id="simulatePaid">I Paid (Simulate)</button>
+                </div>
+                <div class="small" style="margin-top:8px">Use the order ID (<span style="font-family:monospace">${order.orderId}</span>) as the payment reference in Palmpay.</div>
+              </div>
+            </div>
+            <div>
+              <h4>Order summary</h4>
+              <div style="margin-top:8px">
+                ${order.items.map(it => `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed #eee"><div><div style="font-weight:700">${it.name} x${it.qty}</div><div class="small">${it.desc}</div></div><div style="font-weight:700">${fmtNaira(it.price * it.qty)}</div></div>`).join('')}
+                <div style="display:flex;justify-content:space-between;padding-top:8px;font-weight:700"><div>Total</div><div>${fmtNaira(order.total)}</div></div>
+              </div>
+              <div style="margin-top:10px;display:flex;gap:8px">
+                <button class="btn btn-ghost" id="exportOrderJson">Export JSON</button>
+                <button class="btn btn-ghost" id="cancelOrderBtn">Cancel Order</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('copyAcct').addEventListener('click', async ()=>{
+        try{
+          await navigator.clipboard.writeText(`${PALMPAY.provider} ${PALMPAY.number} (${PALMPAY.accountName})`);
+          alert('Account details copied to clipboard');
+        }catch(e){
+          prompt('Copy manually:', `${PALMPAY.provider} ${PALMPAY.number} (${PALMPAY.accountName})`);
+        }
+      });
+      document.getElementById('callAcct').addEventListener('click', ()=>{ window.open('tel:' + PALMPAY.number); });
+      document.getElementById('simulatePaid').addEventListener('click', async ()=>{
+        // simulate provider webhook verifying payment
+        try{
+          const paid = await fakeMarkPaid(order.orderId, 'SIM-REF-' + Date.now());
+          alert('Payment simulated. Order marked PAID/PROCESSING.');
+          showOrderPlaced(paid); // refresh UI
+          // optionally clear cart now
+          cart = {}; saveCart(); renderCart(); renderMenu();
+        }catch(err){
+          alert('Error: ' + err.message);
+        }
+      });
+      document.getElementById('exportOrderJson').addEventListener('click', ()=>{
+        const blob = new Blob([JSON.stringify(order, null, 2)], {type:'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href=url; a.download = `${order.orderId}.json`; a.click(); URL.revokeObjectURL(url);
+      });
+      document.getElementById('cancelOrderBtn').addEventListener('click', async ()=>{
+        if(!confirm('Cancel this order?')) return;
+        await fakeUpdateStatus(order.orderId, 'CANCELLED');
+        alert('Order cancelled');
+        orderPlacedArea.style.display = 'none';
+      });
+    }
+
+    // ---------- Admin ----------
+    const adminOpen = document.getElementById('adminOpen');
+    const adminModal = document.getElementById('adminModal');
+    const adminClose = document.getElementById('adminClose');
+    const adminUnlock = document.getElementById('adminUnlock');
+    const adminPass = document.getElementById('adminPass');
+    const adminContent = document.getElementById('adminContent');
+    const ordersList = document.getElementById('ordersList');
+    const seedMenuBtn = document.getElementById('seedMenu');
+    const exportOrdersBtn = document.getElementById('exportOrders');
+    const clearAllOrdersBtn = document.getElementById('clearAllOrders');
+
+    adminOpen.addEventListener('click', ()=>{ adminModal.style.display = 'flex'; adminPass.value=''; adminContent.style.display='none'; ordersList.innerHTML=''; });
+    adminClose.addEventListener('click', ()=>{ adminModal.style.display = 'none'; });
+
+    adminUnlock.addEventListener('click', ()=>{
+      // demo password (change or replace with real auth)
+      if(adminPass.value === 'admin123'){
+        adminContent.style.display = 'block'; renderOrdersAdmin();
+      } else { alert('Wrong password (demo). Try admin123'); }
+    });
+
+    function renderOrdersAdmin(){
+      const orders = readOrders();
+      if(orders.length === 0){ ordersList.innerHTML = '<div class="muted">No orders yet</div>'; return; }
+      ordersList.innerHTML = '';
+      orders.forEach(o=>{
+        const div = document.createElement('div');
+        div.className = 'card';
+        div.style.marginBottom = '8px';
+        div.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div style="font-weight:700">${o.customerName} • ${o.customerPhone}</div>
+              <div class="small">Order ID: <strong>${o.orderId}</strong></div>
+              <div class="small">Created: ${new Date(o.createdAt).toLocaleString()}</div>
+            </div>
+            <div style="text-align:right">
+              <div class="small">Status:</div>
+              <div style="margin-top:6px">${o.status === 'AWAITING_PAYMENT' ? '<span class="status-pending">AWAITING_PAYMENT</span>' : (o.status === 'PROCESSING' ? '<span class="status-processing">PROCESSING</span>' : (o.status === 'COMPLETED' ? '<span class="status-paid">COMPLETED</span>' : '<span class="small">' + o.status + '</span>'))}</div>
+            </div>
+          </div>
+          <div style="margin-top:8px">${o.items.map(it => `<div style="display:flex;justify-content:space-between;padding:4px 0"><div>${it.name} x${it.qty}</div><div>${fmtNaira(it.price*it.qty)}</div></div>`).join('')}</div>
+          <div style="margin-top:8px;display:flex;gap:8px;justify-content:flex-end">
+            <button class="btn btn-ghost" data-action="mark" data-id="${o.orderId}">Mark Paid</button>
+            <button class="btn" style="background:#10b981;color:#fff" data-action="complete" data-id="${o.orderId}">Complete</button>
+            <button class="btn" style="background:#ef4444;color:#fff" data-action="cancel" data-id="${o.orderId}">Cancel</button>
+            <button class="btn btn-ghost" data-action="export" data-id="${o.orderId}">Export</button>
+          </div>
+        `;
+        ordersList.appendChild(div);
+      });
+    }
+
+    ordersList.addEventListener('click', async (e)=>{
+      const btn = e.target.closest('button');
+      if(!btn) return;
+      const act = btn.dataset.action;
+      const id = btn.dataset.id;
+      if(act === 'mark'){
+        await fakeMarkPaid(id, 'ADMIN-MARK-' + Date.now());
+        renderOrdersAdmin();
+      }
+      if(act === 'complete'){
+        await fakeUpdateStatus(id, 'COMPLETED');
+        renderOrdersAdmin();
+      }
+      if(act === 'cancel'){
+        await fakeUpdateStatus(id, 'CANCELLED');
+        renderOrdersAdmin();
+      }
+      if(act === 'export'){
+        const o = await fakeGetOrder(id);
+        const blob = new Blob([JSON.stringify(o, null, 2)], {type:'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href=url; a.download = `${o.orderId}.json`; a.click(); URL.revokeObjectURL(url);
+      }
+    });
+
+    seedMenuBtn.addEventListener('click', ()=>{
+      if(!confirm('Reset orders and re-seed demo menu?')) return;
+      writeOrders([]); // clear orders
+      // optionally clear cart
+      cart = {}; saveCart(); renderCart(); renderMenu();
+      alert('Reset done.');
+      renderOrdersAdmin();
+    });
+
+    exportOrdersBtn.addEventListener('click', ()=>{
+      const o = readOrders();
+      const blob = new Blob([JSON.stringify(o, null, 2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href=url; a.download = 'orders_export.json'; a.click(); URL.revokeObjectURL(url);
+    });
+
+    clearAllOrdersBtn.addEventListener('click', ()=>{
+      if(!confirm('Delete ALL orders from local storage?')) return;
+      writeOrders([]);
+      renderOrdersAdmin();
+      alert('All orders cleared.');
+    });
+
+    // ---------- Init ----------
+    (function init(){
+      document.getElementById('year').textContent = new Date().getFullYear();
+      document.getElementById('palmpay-num').textContent = PALMPAY.number;
+      document.getElementById('palmpay-name').textContent = PALMPAY.accountName;
+      loadCart();
+      renderMenu();
+      renderCart();
+      // load existing orders if any (demo)
+      if(!localStorage.getItem(STORAGE_KEYS.ORDERS)) writeOrders([]);
+    })();
+
+    // ---------- Helpful comments for conversion to real backend ----------
+    /*
+      To convert this demo into a real, production app:
+
+      1. Replace the fakeCreateOrder / fakeGetOrder / fakeMarkPaid with fetch()/axios calls to your backend:
+         - POST /api/orders with body { customerName, customerPhone, items, note, total }
+         - Backend responds with saved order (orderId, status, payment info)
+
+      2. Backend should:
+         - Persist orders to a database (MongoDB/Postgres)
+         - Expose admin endpoints protected with authentication
+         - Implement webhooks for Paystack/Flutterwave/Palmpay and verify signatures
+
+      3. For payments:
+         - Integrate Paystack or Flutterwave SDK for card/payments; Palmpay may provide a merchant API/webhook
+         - For bank/app transfer workflow, show account details and verify via webhook or polling payment verification endpoint
+
+      4. Deploy:
+         - Backend: Render / Heroku / DigitalOcean / AWS
+         - Frontend: Vercel / Netlify / static host (or serve via nginx in docker)
+         - Use HTTPS and secure webhooks
+
+      5. Security:
+         - Do not store secrets in frontend. Use server-side environment variables and verify webhook signatures.
+    */
+
+  </script>
+</body>
+</html>
